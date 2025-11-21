@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 interface CompetitorCardProps {
   competitor: Competitor;
   isSelected?: boolean;
-  onToggleSelect?: (id: string) => void;
+  onToggleSelect?: (competitorId: string) => void;
   isSelectionMode?: boolean;
   isMaxSelected?: boolean;
 }
@@ -28,38 +28,66 @@ export function CompetitorCard({
   const handleClick = (e: React.MouseEvent) => {
     if (isSelectionMode && onToggleSelect) {
       e.preventDefault();
-      // Only prevent selection if max is reached and this item is not already selected
+      // Only allow selection if not at max or if deselecting
       if (!isMaxSelected || isSelected) {
         onToggleSelect(competitor.id);
       }
     }
   };
 
-  const cardContent = (
-    <div
-      className={`glass rounded-2xl p-6 h-full transition-all border ${
-        isSelected
-          ? 'border-primary shadow-lg ring-2 ring-primary/20'
-          : 'border-transparent hover:border-primary/20'
-      } ${
-        isSelectionMode && !isSelected && isMaxSelected
-          ? 'opacity-50 cursor-not-allowed'
-          : 'hover:shadow-lg'
-      }`}
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ y: -4 }}
+      className="group relative"
     >
-      {/* Selection Checkbox */}
-      {isSelectionMode && (
-        <div className="mb-4 flex items-center justify-between">
-          <div
-            className={`w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer transition-all ${
-              isSelected
-                ? 'bg-primary border-primary'
-                : isMaxSelected
-                  ? 'border-gray-300 bg-gray-100'
-                  : 'border-gray-400 hover:border-primary'
-            }`}
-          >
-            {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+      <Link href={`/competitors/${competitor.id}`} onClick={handleClick}>
+        <div className={`glass rounded-2xl p-6 h-full hover:shadow-lg transition-all border ${
+          isSelected
+            ? 'border-primary/50 ring-2 ring-primary/20'
+            : 'border-transparent hover:border-primary/20'
+        } ${isSelectionMode && isMaxSelected && !isSelected ? 'opacity-50 cursor-not-allowed' : ''}`}>
+
+          {/* Selection Checkbox */}
+          {isSelectionMode && (
+            <div className="absolute top-4 right-4 z-10">
+              <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${
+                isSelected
+                  ? 'bg-primary border-primary'
+                  : 'border-muted-foreground/30 bg-white'
+              }`}>
+                {isSelected && <Check className="w-4 h-4 text-white" />}
+              </div>
+            </div>
+          )}
+          {/* Header */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center overflow-hidden">
+                <img
+                  src={basics.logo}
+                  alt={basics.name}
+                  className="w-10 h-10 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `https://ui-avatars.com/api/?name=${basics.name}&background=random`;
+                  }}
+                />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                  {basics.name}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {basics.industry.value}
+                </p>
+              </div>
+            </div>
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <ExternalLink className="w-4 h-4 text-muted-foreground" />
+            </div>
           </div>
           {isMaxSelected && !isSelected && (
             <span className="text-xs text-muted-foreground">Max reached</span>

@@ -1,13 +1,82 @@
 import Link from 'next/link';
-import { ArrowRight, TrendingUp, Users, DollarSign, Star } from 'lucide-react';
+import { ArrowRight, TrendingUp, Users, Database } from 'lucide-react';
 import { competitors } from '@/data/competitors';
 import { CompetitorCard } from '@/components/competitors/CompetitorCard';
 
 export default function HomePage() {
-  // Calculate some quick stats
-  const avgRating = competitors.reduce((acc, c) => acc + (c.reviews?.aggregatedRating || 0), 0) / competitors.length;
-  const totalEmployees = competitors.reduce((acc, c) => acc + (c.basics.numberOfEmployees.value || 0), 0);
+  // Calculate aggregate metrics
   const avgCompleteness = competitors.reduce((acc, c) => acc + c.completeness, 0) / competitors.length;
+
+  // Calculate total insights (data points) from the database
+  const totalInsights = competitors.reduce((total, competitor) => {
+    let insights = 0;
+
+    // Count basic data points
+    insights += 1; // name
+    insights += competitor.basics.website ? 1 : 0;
+    insights += competitor.basics.description ? 1 : 0;
+    insights += competitor.basics.headquarters ? 1 : 0;
+    insights += competitor.basics.foundedYear ? 1 : 0;
+    insights += competitor.basics.numberOfEmployees.value ? 1 : 0;
+    insights += competitor.basics.industry ? 1 : 0;
+
+    // Count social media links
+    if (competitor.basics.socialMedia) {
+      insights += competitor.basics.socialMedia.linkedin ? 1 : 0;
+      insights += competitor.basics.socialMedia.twitter ? 1 : 0;
+      insights += competitor.basics.socialMedia.facebook ? 1 : 0;
+      insights += competitor.basics.socialMedia.instagram ? 1 : 0;
+    }
+
+    // Count financial data points
+    if (competitor.financials) {
+      insights += competitor.financials.isPublic ? 1 : 0;
+      insights += competitor.financials.stockSymbol ? 1 : 0;
+      insights += competitor.financials.valuation?.value ? 1 : 0;
+      insights += competitor.financials.totalFunding?.value ? 1 : 0;
+      insights += competitor.financials.fundingRounds?.length || 0;
+      insights += competitor.financials.quarterlyEarnings?.length || 0;
+      insights += competitor.financials.revenueHistory?.length || 0;
+    }
+
+    // Count products
+    insights += competitor.products?.length || 0;
+
+    // Count pricing tiers
+    insights += competitor.pricing?.tiers?.length || 0;
+
+    // Count milestones
+    insights += competitor.milestones?.length || 0;
+
+    // Count technology stack items
+    if (competitor.technology) {
+      insights += competitor.technology.frontend ? 1 : 0;
+      insights += competitor.technology.backend ? 1 : 0;
+      insights += competitor.technology.infrastructure ? 1 : 0;
+      insights += competitor.technology.security ? 1 : 0;
+      insights += competitor.technology.integrations?.length || 0;
+      insights += competitor.technology.mobileApps?.ios ? 1 : 0;
+      insights += competitor.technology.mobileApps?.android ? 1 : 0;
+    }
+
+    // Count marketing insights
+    if (competitor.marketing) {
+      insights += competitor.marketing.brandIdentity ? 1 : 0;
+      insights += competitor.marketing.valuePropositions?.length || 0;
+      insights += competitor.marketing.targetMarkets?.length || 0;
+      insights += competitor.marketing.differentiators?.length || 0;
+      insights += competitor.marketing.marketingChannels?.length || 0;
+      insights += competitor.marketing.seoStrategy ? 1 : 0;
+    }
+
+    // Count claims
+    insights += competitor.claims?.length || 0;
+
+    // Count review platforms
+    insights += competitor.reviews?.reviews?.length || 0;
+
+    return total + insights;
+  }, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -53,7 +122,7 @@ export default function HomePage() {
 
       {/* Quick Stats */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="glass rounded-2xl p-6 space-y-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -69,11 +138,11 @@ export default function HomePage() {
           <div className="glass rounded-2xl p-6 space-y-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                <Star className="w-5 h-5 text-green-600" />
+                <Database className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Avg. Rating</p>
-                <p className="text-2xl font-bold">{avgRating.toFixed(1)}</p>
+                <p className="text-sm text-muted-foreground">Total Insights</p>
+                <p className="text-2xl font-bold">{totalInsights.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -86,18 +155,6 @@ export default function HomePage() {
               <div>
                 <p className="text-sm text-muted-foreground">Data Completeness</p>
                 <p className="text-2xl font-bold">{avgCompleteness.toFixed(0)}%</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass rounded-2xl p-6 space-y-2">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-orange-600" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Combined Workforce</p>
-                <p className="text-2xl font-bold">{(totalEmployees / 1000).toFixed(0)}K+</p>
               </div>
             </div>
           </div>

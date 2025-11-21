@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { competitors } from '@/data/competitors';
 import { CompetitorCard } from '@/components/competitors/CompetitorCard';
@@ -8,7 +8,36 @@ import { Search, ArrowRight } from 'lucide-react';
 
 export default function CompetitorsPage() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCompetitors, setSelectedCompetitors] = useState<string[]>([]);
+
+  // Filter competitors based on search query
+  const filteredCompetitors = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return competitors;
+    }
+
+    const query = searchQuery.toLowerCase();
+    return competitors.filter((competitor) => {
+      // Search in name
+      if (competitor.basics.name.toLowerCase().includes(query)) {
+        return true;
+      }
+      // Search in industry
+      if (competitor.basics.industry.value?.toString().toLowerCase().includes(query)) {
+        return true;
+      }
+      // Search in description
+      if (competitor.basics.description.value?.toString().toLowerCase().includes(query)) {
+        return true;
+      }
+      // Search in headquarters location
+      if (competitor.basics.headquarters.value?.toString().toLowerCase().includes(query)) {
+        return true;
+      }
+      return false;
+    });
+  }, [searchQuery]);
 
   const handleToggleCompetitor = (competitorId: string) => {
     setSelectedCompetitors((prev) => {
@@ -53,6 +82,8 @@ export default function CompetitorsPage() {
             <input
               type="text"
               placeholder="Search competitors..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
@@ -68,6 +99,13 @@ export default function CompetitorsPage() {
             </button>
           )}
         </div>
+
+        {/* Search Results Info */}
+        {searchQuery && (
+          <p className="mb-4 text-sm text-muted-foreground">
+            Found {filteredCompetitors.length} competitor{filteredCompetitors.length !== 1 ? 's' : ''} matching "{searchQuery}"
+          </p>
+        )}
 
         {/* Selection Info */}
         {selectedCompetitors.length > 0 && (
@@ -86,18 +124,29 @@ export default function CompetitorsPage() {
         )}
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {competitors.map((competitor) => (
-            <CompetitorCard
-              key={competitor.id}
-              competitor={competitor}
-              isSelected={selectedCompetitors.includes(competitor.id)}
-              onToggleSelect={handleToggleCompetitor}
-              isSelectionMode={true}
-              isMaxSelected={selectedCompetitors.length >= 4}
-            />
-          ))}
-        </div>
+        {filteredCompetitors.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCompetitors.map((competitor) => (
+              <CompetitorCard
+                key={competitor.id}
+                competitor={competitor}
+                isSelected={selectedCompetitors.includes(competitor.id)}
+                onToggleSelect={handleToggleCompetitor}
+                isSelectionMode={true}
+                isMaxSelected={selectedCompetitors.length >= 4}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-lg text-muted-foreground">
+              No competitors found matching "{searchQuery}"
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Try searching for a company name, industry, or location
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
