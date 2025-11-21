@@ -35,8 +35,7 @@ export function CompetitorCard({
   };
 
   return (
-    <div className="group relative transition-all hover:-translate-y-1"
-    >
+    <div className="group relative transition-all hover:-translate-y-1">
       <Link href={`/competitors/${competitor.id}`} onClick={handleClick}>
         <div className={`glass rounded-2xl p-6 h-full hover:shadow-lg transition-all border ${
           isSelected
