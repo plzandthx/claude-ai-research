@@ -6,7 +6,6 @@ import { Competitor } from '@/lib/types';
 import { Star, TrendingUp, Users, ExternalLink, Check } from 'lucide-react';
 import { ConfidenceBadge } from '@/components/ui/ConfidenceBadge';
 import { formatNumber } from '@/lib/utils';
-import { motion } from 'framer-motion';
 
 interface CompetitorCardProps {
   competitor: Competitor;
@@ -36,12 +35,7 @@ export function CompetitorCard({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ y: -4 }}
-      className="group relative"
+    <div className="group relative transition-all hover:-translate-y-1"
     >
       <Link href={`/competitors/${competitor.id}`} onClick={handleClick}>
         <div className={`glass rounded-2xl p-6 h-full hover:shadow-lg transition-all border ${
@@ -156,6 +150,6 @@ export function CompetitorCard({
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
