@@ -55,6 +55,7 @@ export function CompetitorCard({
               </div>
             </div>
           )}
+
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -78,94 +79,70 @@ export function CompetitorCard({
                 </p>
               </div>
             </div>
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-              <ExternalLink className="w-4 h-4 text-muted-foreground" />
-            </div>
+            {!isSelectionMode && (
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <ExternalLink className="w-4 h-4 text-muted-foreground" />
+              </div>
+            )}
           </div>
-          {isMaxSelected && !isSelected && (
-            <span className="text-xs text-muted-foreground">Max reached</span>
+
+          {/* Description */}
+          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+            {basics.description.value}
+          </p>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <Users className="w-3.5 h-3.5" />
+                <span className="text-xs">Employees</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold">
+                  {formatNumber(basics.numberOfEmployees.value)}
+                </p>
+                <ConfidenceBadge confidence={basics.numberOfEmployees.confidence} />
+              </div>
+            </div>
+
+            {reviews && (
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <Star className="w-3.5 h-3.5" />
+                  <span className="text-xs">Rating</span>
+                </div>
+                <p className="text-sm font-semibold">
+                  {reviews.aggregatedRating.toFixed(1)} / 5.0
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Valuation if available */}
+          {financials?.valuation && (
+            <div className="pt-3 border-t border-border/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  <span className="text-xs">Valuation</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold">
+                    ${(financials.valuation.value / 1000000000).toFixed(1)}B
+                  </p>
+                  <ConfidenceBadge confidence={financials.valuation.confidence} />
+                </div>
+              </div>
+            </div>
           )}
-        </div>
-      )}
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center overflow-hidden">
-            <img
-              src={basics.logo}
-              alt={basics.name}
-              className="w-10 h-10 object-contain"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://ui-avatars.com/api/?name=${basics.name}&background=random`;
-              }}
-            />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-              {basics.name}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {basics.industry.value}
-            </p>
-          </div>
-        </div>
-        {!isSelectionMode && (
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <ExternalLink className="w-4 h-4 text-muted-foreground" />
-          </div>
-        )}
-      </div>
-
-      {/* Description */}
-      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-        {basics.description.value}
-      </p>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Users className="w-3.5 h-3.5" />
-            <span className="text-xs">Employees</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold">
-              {formatNumber(basics.numberOfEmployees.value)}
-            </p>
-            <ConfidenceBadge confidence={basics.numberOfEmployees.confidence} />
-          </div>
-        </div>
-
-        {reviews && (
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Star className="w-3.5 h-3.5" />
-              <span className="text-xs">Rating</span>
+          {/* Max reached indicator */}
+          {isMaxSelected && !isSelected && (
+            <div className="mt-2 text-center">
+              <span className="text-xs text-muted-foreground">Max reached</span>
             </div>
-            <p className="text-sm font-semibold">
-              {reviews.aggregatedRating.toFixed(1)} / 5.0
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Valuation if available */}
-      {financials?.valuation && (
-        <div className="pt-3 border-t border-border/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <TrendingUp className="w-3.5 h-3.5" />
-              <span className="text-xs">Valuation</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold">
-                ${(financials.valuation.value / 1000000000).toFixed(1)}B
-              </p>
-              <ConfidenceBadge confidence={financials.valuation.confidence} />
-            </div>
-          </div>
+          )}
         </div>
       </Link>
     </div>

@@ -4,7 +4,6 @@ import { Competitor } from '@/lib/types';
 import { X, Lock, Unlock, Users, TrendingUp, Star, Globe, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { ConfidenceBadge } from '@/components/ui/ConfidenceBadge';
 import { formatNumber, formatCurrency } from '@/lib/utils';
-import { motion } from 'framer-motion';
 
 interface CompareColumnProps {
   competitor: Competitor;
