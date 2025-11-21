@@ -6,7 +6,6 @@ import { Competitor } from '@/lib/types';
 import { Star, TrendingUp, Users, ExternalLink, Check } from 'lucide-react';
 import { ConfidenceBadge } from '@/components/ui/ConfidenceBadge';
 import { formatNumber } from '@/lib/utils';
-import { motion } from 'framer-motion';
 
 interface CompetitorCardProps {
   competitor: Competitor;
@@ -36,12 +35,7 @@ export function CompetitorCard({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ y: -4 }}
-      className="group relative"
+    <div className="group relative transition-all hover:-translate-y-1"
     >
       <Link href={`/competitors/${competitor.id}`} onClick={handleClick}>
         <div className={`glass rounded-2xl p-6 h-full hover:shadow-lg transition-all border ${
@@ -174,42 +168,7 @@ export function CompetitorCard({
             </div>
           </div>
         </div>
-      )}
-
-      {/* Completeness */}
-      <div className="mt-4 pt-4 border-t border-border/50">
-        <div className="flex items-center justify-between text-xs mb-1.5">
-          <span className="text-muted-foreground">Data Completeness</span>
-          <span className="font-medium">{competitor.completeness}%</span>
-        </div>
-        <div className="w-full bg-muted rounded-full h-1.5">
-          <div
-            className="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 rounded-full transition-all"
-            style={{ width: `${competitor.completeness}%` }}
-          />
-        </div>
-      </div>
+      </Link>
     </div>
-  );
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ y: isSelectionMode && !isSelected && isMaxSelected ? 0 : -4 }}
-      className="group"
-      onClick={handleClick}
-    >
-      {isSelectionMode ? (
-        <div className="cursor-pointer">
-          {cardContent}
-        </div>
-      ) : (
-        <Link href={`/competitors/${competitor.id}`}>
-          {cardContent}
-        </Link>
-      )}
-    </motion.div>
   );
 }
