@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
   id: string;
@@ -106,59 +105,50 @@ export default function ChatPage() {
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-8">
           <div className="space-y-6">
-            <AnimatePresence>
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className={`flex gap-4 ${
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex gap-4 animate-fade-in ${
+                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
+              >
+                {message.role === 'assistant' && (
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                )}
+
+                <div
+                  className={`max-w-2xl px-4 py-3 rounded-2xl ${
+                    message.role === 'user'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'glass border border-border/40'
                   }`}
                 >
-                  {message.role === 'assistant' && (
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-5 h-5 text-white" />
-                    </div>
-                  )}
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                </div>
 
-                  <div
-                    className={`max-w-2xl px-4 py-3 rounded-2xl ${
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'glass border border-border/40'
-                    }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                {message.role === 'user' && (
+                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+                    <User className="w-5 h-5" />
                   </div>
-
-                  {message.role === 'user' && (
-                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-                      <User className="w-5 h-5" />
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                )}
+              </div>
+            ))}
 
             {isLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex gap-4"
-              >
+              <div className="flex gap-4 animate-fade-in">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
                 <div className="glass border border-border/40 px-4 py-3 rounded-2xl">
                   <div className="flex gap-1">
                     <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-200" />
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.1s]" />
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             <div ref={messagesEndRef} />

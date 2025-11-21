@@ -2,7 +2,6 @@
 
 import { ReactNode, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface SectionProps {
   title: string;
@@ -41,25 +40,18 @@ export function Section({
         </div>
         {collapsible && (
           <ChevronDown
-            className={`w-5 h-5 text-muted-foreground transition-transform ${
+            className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${
               isExpanded ? 'rotate-180' : ''
             }`}
           />
         )}
       </button>
 
-      <AnimatePresence initial={false}>
-        {isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="px-6 pb-6 border-t border-border/40">{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isExpanded && (
+        <div className="animate-collapse-down">
+          <div className="px-6 pb-6 border-t border-border/40">{children}</div>
+        </div>
+      )}
     </div>
   );
 }
