@@ -3,17 +3,37 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Competitor } from '@/lib/types';
-import { Star, TrendingUp, Users, ExternalLink } from 'lucide-react';
+import { Star, TrendingUp, Users, ExternalLink, Check } from 'lucide-react';
 import { ConfidenceBadge } from '@/components/ui/ConfidenceBadge';
 import { formatNumber } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 interface CompetitorCardProps {
   competitor: Competitor;
+  isSelected?: boolean;
+  onToggleSelect?: (competitorId: string) => void;
+  isSelectionMode?: boolean;
+  isMaxSelected?: boolean;
 }
 
-export function CompetitorCard({ competitor }: CompetitorCardProps) {
+export function CompetitorCard({
+  competitor,
+  isSelected = false,
+  onToggleSelect,
+  isSelectionMode = false,
+  isMaxSelected = false
+}: CompetitorCardProps) {
   const { basics, reviews, financials } = competitor;
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isSelectionMode && onToggleSelect) {
+      e.preventDefault();
+      // Only allow selection if not at max or if deselecting
+      if (!isMaxSelected || isSelected) {
+        onToggleSelect(competitor.id);
+      }
+    }
+  };
 
   return (
     <motion.div
@@ -21,10 +41,27 @@ export function CompetitorCard({ competitor }: CompetitorCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       whileHover={{ y: -4 }}
-      className="group"
+      className="group relative"
     >
-      <Link href={`/competitors/${competitor.id}`}>
-        <div className="glass rounded-2xl p-6 h-full hover:shadow-lg transition-all border border-transparent hover:border-primary/20">
+      <Link href={`/competitors/${competitor.id}`} onClick={handleClick}>
+        <div className={`glass rounded-2xl p-6 h-full hover:shadow-lg transition-all border ${
+          isSelected
+            ? 'border-primary/50 ring-2 ring-primary/20'
+            : 'border-transparent hover:border-primary/20'
+        } ${isSelectionMode && isMaxSelected && !isSelected ? 'opacity-50 cursor-not-allowed' : ''}`}>
+
+          {/* Selection Checkbox */}
+          {isSelectionMode && (
+            <div className="absolute top-4 right-4 z-10">
+              <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${
+                isSelected
+                  ? 'bg-primary border-primary'
+                  : 'border-muted-foreground/30 bg-white'
+              }`}>
+                {isSelected && <Check className="w-4 h-4 text-white" />}
+              </div>
+            </div>
+          )}
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
