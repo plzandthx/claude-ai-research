@@ -7,7 +7,6 @@ import { Competitor } from '@/lib/types';
 import { X, Lock, Unlock, Plus, ArrowLeft } from 'lucide-react';
 import { CompareColumn } from '@/components/competitors/compare/CompareColumn';
 import { AddCompetitorDialog } from '@/components/competitors/compare/AddCompetitorDialog';
-import { motion, AnimatePresence } from 'framer-motion';
 
 function ComparePageContent() {
   const searchParams = useSearchParams();
@@ -90,35 +89,27 @@ function ComparePageContent() {
 
           {/* Scrollable Columns */}
           <div className="flex gap-4">
-            <AnimatePresence>
-              {selectedCompetitors
-                .filter((c) => c.id !== lockedColumnId)
-                .map((competitor) => (
-                  <motion.div
-                    key={competitor.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex-shrink-0"
-                  >
-                    <CompareColumn
-                      competitor={competitor}
-                      isLocked={false}
-                      onRemove={handleRemoveCompetitor}
-                      onToggleLock={handleToggleLock}
-                    />
-                  </motion.div>
-                ))}
-            </AnimatePresence>
+            {selectedCompetitors
+              .filter((c) => c.id !== lockedColumnId)
+              .map((competitor) => (
+                <div
+                  key={competitor.id}
+                  className="flex-shrink-0 transition-all duration-200"
+                >
+                  <CompareColumn
+                    competitor={competitor}
+                    isLocked={false}
+                    onRemove={handleRemoveCompetitor}
+                    onToggleLock={handleToggleLock}
+                  />
+                </div>
+              ))}
 
             {/* Empty Slots */}
             {Array.from({ length: emptySlots }).map((_, index) => (
-              <motion.div
+              <div
                 key={`empty-${index}`}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex-shrink-0 w-80"
+                className="flex-shrink-0 w-80 transition-all duration-200"
               >
                 <div className="glass rounded-2xl border-2 border-dashed border-border/50 h-full min-h-[600px] flex items-center justify-center">
                   <button
@@ -136,7 +127,7 @@ function ComparePageContent() {
                     </div>
                   </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

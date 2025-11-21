@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Competitor } from '@/lib/types';
 import { X, Search } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface AddCompetitorDialogProps {
   isOpen: boolean;
@@ -33,25 +32,15 @@ export function AddCompetitorDialog({
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50"
-          />
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-black/50 z-50 animate-in fade-in duration-200"
+      />
 
-          {/* Dialog */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
+      {/* Dialog */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="glass rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden shadow-2xl">
               {/* Header */}
               <div className="p-6 border-b border-border/40 flex items-center justify-between">
@@ -89,12 +78,10 @@ export function AddCompetitorDialog({
                 ) : (
                   <div className="grid grid-cols-1 gap-3">
                     {filteredCompetitors.map((competitor) => (
-                      <motion.button
+                      <button
                         key={competitor.id}
                         onClick={() => handleSelect(competitor)}
-                        className="glass rounded-xl p-4 text-left hover:shadow-lg hover:border-primary/20 transition-all border border-transparent"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        className="glass rounded-xl p-4 text-left hover:shadow-lg hover:border-primary/20 transition-all border border-transparent hover:scale-[1.02] active:scale-[0.98]"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -122,15 +109,13 @@ export function AddCompetitorDialog({
                             </div>
                           </div>
                         </div>
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
                 )}
               </div>
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+    </>
   );
 }
