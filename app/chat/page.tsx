@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { generateChatResponse } from '@/lib/chat';
 
 interface Message {
   id: string;
@@ -47,18 +48,13 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input, history: messages }),
-      });
-
-      const data = await response.json();
+      // Generate response client-side
+      const response = generateChatResponse(input);
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response,
+        content: response,
         timestamp: new Date(),
       };
 
