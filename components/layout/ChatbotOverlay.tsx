@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { MessageSquare, X, Send } from 'lucide-react';
 
 export function ChatbotOverlay() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
     {
@@ -20,8 +23,8 @@ export function ChatbotOverlay() {
     setMessages((prev) => [...prev, { role: 'user', content: input }]);
     setInput('');
 
-    // For demo, redirect to full chat page
-    window.location.href = '/chat';
+    // Redirect to full chat page using Next.js router (handles basePath)
+    router.push('/chat');
   };
 
   return (
@@ -82,9 +85,9 @@ export function ChatbotOverlay() {
             </div>
             <p className="text-xs text-muted-foreground mt-2 text-center">
               Or{' '}
-              <a href="/chat" className="text-primary hover:underline">
+              <Link href="/chat" className="text-primary hover:underline">
                 open full chat
-              </a>
+              </Link>
             </p>
           </form>
         </div>
